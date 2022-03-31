@@ -1,0 +1,7 @@
+wallet: 0x82B034184321fE02dd714704Bfe836A3B53F0B70
+database_engine: 'django.db.backends.postgresql'
+database_hostname: 127.0.0.1
+database_port: 5432
+database_name: ''
+database_username: ''
+database_password: ''
