@@ -9,12 +9,18 @@ https://docs.djangoproject.com/en/4.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
-
+import os.path
 from pathlib import Path
+
+
+from RockNBlockTestTask.config_provider import ConfigProvider
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+CONFIG_PATH = os.path.normpath('RockNBlockTestTask\\service_config')
+
+CONFIG = ConfigProvider(base_dir=BASE_DIR, path_to_config=CONFIG_PATH).get_config()
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
@@ -77,12 +83,12 @@ WSGI_APPLICATION = 'RockNBlockTestTask.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME':  'postgres',
-        'USER': 'postgres',
-        'PASSWORD': '1~',
-        'HOST': '127.0.0.1',
-        'PORT': '5432',
+        'ENGINE': CONFIG['database']['database_engine'],
+        'NAME':   CONFIG['database']['database_name'],
+        'USER':  CONFIG['database']['database_username'],
+        'PASSWORD':  CONFIG['database']['database_password'],
+        'HOST':  CONFIG['database']['database_hostname'],
+        'PORT':  CONFIG['database']['database_port'],
     }
 }
 
