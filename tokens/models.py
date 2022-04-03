@@ -1,8 +1,11 @@
+import json
+
 from django.db import models
 
 
 class Token(models.Model):
-    unique_hash = models.BigIntegerField()
+    id = models.BigAutoField(primary_key=True)
+    unique_hash = models.BigIntegerField(max_length=20)
     tx_hash = models.BigIntegerField()
     media_url = models.URLField()
-    owner = models.TextField()
+    owner = models.CharField(max_length=42)
