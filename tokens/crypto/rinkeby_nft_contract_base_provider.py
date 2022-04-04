@@ -11,7 +11,6 @@ class RinkebyNFTContractBaseProvider(metaclass=ABCMeta):
     def totalSupply(self):
         raise NotImplementedError("Not implemented 'totalSupply' method")
 
-
     @abstractmethod
     def signTransaction(self, transaction, private_key):
         raise NotImplementedError("Not implemented 'signTransaction' method")

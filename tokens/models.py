@@ -9,3 +9,13 @@ class Token(models.Model):
     tx_hash = models.BigIntegerField()
     media_url = models.URLField()
     owner = models.CharField(max_length=42)
+
+    @classmethod
+    def create(cls, unique_hash, tx_hash, media_url, owner):
+        token = cls(
+            unique_hash=unique_hash,
+            tx_hash=tx_hash,
+            media_url=media_url,
+            owner=owner
+        )
+        return token
