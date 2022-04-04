@@ -1,26 +1,35 @@
 from random import choice
-from string import ascii_uppercase, ascii_lowercase, digits
+from string import ascii_lowercase, digits, ascii_uppercase
 
-import web3.auto
-import web3.eth
+from eth_account.messages import encode_defunct
 from web3 import Web3
 from web3.middleware import geth_poa_middleware
 
-from tokens.crypto.blockchain_base_provider import BlockChainBaseProvider
+from tokens.crypto.blockchain_base_provide import BlockchainBaseProvider
 
 
-class BlockchainProvider(BlockChainBaseProvider):
+class BlockchainProvider(BlockchainBaseProvider):
 
     def __init__(self, node_address):
         self.node_address = node_address
 
-    def mint(self, contract_address, contract_abi):
-        pass
+    def signTransaction(self, transaction, private_key):
+        signed_transaction = self.provider.eth.account.sign_transaction(transaction, private_key=private_key)
+        return signed_transaction
 
-    def totalSupply(self, contract_address, contract_abi):
-        contract = self.provider.eth.contract(address=contract_address, abi=contract_abi)
-        res = contract.functions.totalSupply(74).call
-        return res
+    def sendTransaction(self, signed_transaction):
+        transfer = self.provider.eth.sendTransaction(signed_transaction.rawTransaction)
+        return transfer
+
+    def signMessage(self, msg_for_sign, private_key):
+        message = encode_defunct(text=msg_for_sign)
+        signed_message = self.provider.eth.account.sign_message(message, private_key=private_key)
+        return signed_message
+
+    def verifyMessage(self, msg_for_sign, signed_message):
+        message = encode_defunct(text=msg_for_sign)
+        recover_hash = self.provider.eth.account.recover_message(message, signature=signed_message.signature)
+        return recover_hash
 
     @staticmethod
     def generateRandomRaw():
@@ -35,5 +44,5 @@ class BlockchainProvider(BlockChainBaseProvider):
 
     provider = property(
         fget=_get_provider,
-        doc='Provider property'
+        doc='Http provider for current network node'
     )
