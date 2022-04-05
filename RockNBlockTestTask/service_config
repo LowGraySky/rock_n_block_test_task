@@ -8,7 +8,6 @@ database:
   database_password: '1~'
 
 blockchain:
-  wallet_address: '0x644c8cdA755CA8Cee5eeAC6CFC361c3f9C3AAe51'
   wallet_secret: 3cfb35328315b310162d876b6f79b275d287b9b1721b38d082accad293dd8a22
   node_url: https://rinkeby.infura.io/v3/b92246ded66e449d803931cc623ba5b5
   contract_address: '0x92e098deF0CA9577BD50ca61B90b9A46EC1F2040'

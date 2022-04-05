@@ -1,3 +1,4 @@
+import json
 import logging
 
 from web3.auto import w3
@@ -46,7 +47,16 @@ class RinkebyContractProvider(RinkebyNFTContractBaseProvider):
             private_key=wallet_secret
         )
         tx_hash = self.provider.sendTransaction(signed_transaction=sign_transfer)
-        return tx_hash
+        transaction_obj = json.dumps(
+            {
+                'unique_hash': gen_hash,
+                'tx_hash': tx_hash,
+                'gas': gas,
+                'recovery_hash': recovery_hash,
+                'nonce': nonce
+            }
+        )
+        return transaction_obj
 
     def totalSupply(self):
         supply = self.contract.functions.totalSupply().call
