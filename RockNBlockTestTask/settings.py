@@ -12,7 +12,6 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 import os.path
 from pathlib import Path
 
-
 from RockNBlockTestTask.config_provider import ConfigProvider
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -33,7 +32,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -50,7 +48,6 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -77,21 +74,19 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'RockNBlockTestTask.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
 DATABASES = {
     'default': {
         'ENGINE': CONFIG['database']['database_engine'],
-        'NAME':   CONFIG['database']['database_name'],
-        'USER':  CONFIG['database']['database_username'],
-        'PASSWORD':  CONFIG['database']['database_password'],
-        'HOST':  CONFIG['database']['database_hostname'],
-        'PORT':  CONFIG['database']['database_port'],
+        'NAME': CONFIG['database']['database_name'],
+        'USER': CONFIG['database']['database_username'],
+        'PASSWORD': CONFIG['database']['database_password'],
+        'HOST': CONFIG['database']['database_hostname'],
+        'PORT': CONFIG['database']['database_port'],
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
@@ -111,7 +106,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
 
@@ -123,7 +117,6 @@ USE_I18N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
@@ -133,3 +126,28 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': True,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        }
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
+            'propagate': False,
+        },
+        'crypter': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+        },
+        'eventer': {
+            'handlers': ['console'],
+            'level': 'INFO',
+        }
+    }
+}

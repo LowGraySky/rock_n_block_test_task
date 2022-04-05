@@ -1,11 +1,15 @@
+import logging
 from random import choice
 from string import ascii_lowercase, digits, ascii_uppercase
 
 from eth_account.messages import encode_defunct
+from eth_utils import to_canonical_address
 from web3 import Web3
 from web3.middleware import geth_poa_middleware
 
 from tokens.crypto.blockchain_base_provide import BlockchainBaseProvider
+
+logger = logging.getLogger('crypter')
 
 
 class BlockchainProvider(BlockchainBaseProvider):
@@ -32,7 +36,12 @@ class BlockchainProvider(BlockchainBaseProvider):
         return recover_hash
 
     @staticmethod
-    def generateRandomRaw():
+    def addressFromString(address: str):
+        canon_address = to_canonical_address(address)
+        return canon_address
+
+    @staticmethod
+    def generateRandomRaw() -> str:
         values = digits + ascii_lowercase + ascii_uppercase
         random_number = ''.join(choice(values) for i in range(20))
         return random_number
