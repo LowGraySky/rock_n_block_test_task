@@ -1,7 +1,7 @@
 import json
 import logging
 
-from django.core.exceptions import PermissionDenied
+from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
 from django.http import HttpResponse
 
 from tokens.crypto.blockchain_provider import BlockchainProvider
@@ -17,6 +17,12 @@ def CreateToken(request) -> HttpResponse:
     if request.method == 'POST':
         media_url = request.POST.get('media_url')
         owner = request.POST.get('owner')
+
+        if media_url is None or media_url == '':
+            raise ObjectDoesNotExist
+        if owner is None or owner == '':
+            raise ObjectDoesNotExist
+        logger.info("Got params from request: 'media url':'{}', 'owner':'{}'".format(media_url, owner))
 
         node = CONFIG['blockchain']['node_url']
         address = CONFIG['blockchain']['contract_address']

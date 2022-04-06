@@ -3,7 +3,6 @@ from random import choice
 from string import ascii_lowercase, digits, ascii_uppercase
 
 from eth_account.messages import encode_defunct
-from eth_utils import to_canonical_address
 from web3 import Web3
 from web3.middleware import geth_poa_middleware
 
@@ -15,6 +14,7 @@ logger = logging.getLogger('crypter')
 class BlockchainProvider(BlockchainBaseProvider):
 
     def __init__(self, node_address):
+        super().__init__()
         self.node_address = node_address
 
     def signTransaction(self, transaction, private_key):
@@ -36,11 +36,6 @@ class BlockchainProvider(BlockchainBaseProvider):
         return recover_hash
 
     @staticmethod
-    def addressFromString(address: str):
-        canon_address = to_canonical_address(address)
-        return canon_address
-
-    @staticmethod
     def generateRandomRaw() -> str:
         values = digits + ascii_lowercase + ascii_uppercase
         random_number = ''.join(choice(values) for i in range(20))
@@ -54,4 +49,12 @@ class BlockchainProvider(BlockchainBaseProvider):
     provider = property(
         fget=_get_provider,
         doc='Http provider for current network node'
+    )
+
+    def _get_eth(self):
+        eth = self.provider.eth
+        return eth
+
+    eth = property(
+        fget=_get_eth,
     )

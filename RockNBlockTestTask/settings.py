@@ -25,10 +25,10 @@ CONFIG = ConfigProvider(base_dir=BASE_DIR, path_to_config=CONFIG_PATH).get_confi
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-_%6x=qsrx0n!p65&%ydo)wk7^)%rdv8fc@rls@nh^xatof#wti'
+SECRET_KEY = CONFIG['service']['secret_key']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = CONFIG['service']['debug_mode']
 
 ALLOWED_HOSTS = []
 
@@ -130,6 +130,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': True,
+    'formatters': {
+        'simple': {
+            'format': '{levelname} {asctime} {module} {message}',
+            'style': '{'
+        }
+    },
     'handlers': {
         'console': {
             'class': 'logging.StreamHandler',
@@ -144,10 +150,12 @@ LOGGING = {
         'crypter': {
             'handlers': ['console'],
             'level': 'DEBUG',
+            'formatter': 'simple'
         },
         'eventer': {
             'handlers': ['console'],
             'level': 'INFO',
+            'formatter': 'simple'
         }
     }
 }

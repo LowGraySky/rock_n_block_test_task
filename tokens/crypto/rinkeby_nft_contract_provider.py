@@ -1,6 +1,7 @@
 import json
 import logging
 
+from web3 import Web3
 from web3.auto import w3
 
 from tokens.crypto.blockchain_provider import BlockchainProvider
@@ -11,7 +12,7 @@ logger = logging.getLogger('crypter')
 
 class RinkebyContractProvider(RinkebyNFTContractBaseProvider):
 
-    def __init__(self, blockchain_provider, contract_address, contract_abi, chain_id):
+    def __init__(self, blockchain_provider: BlockchainProvider, contract_address, contract_abi, chain_id):
         self.provider = blockchain_provider
         self.contract_address = contract_address
         self.contract_abi = contract_abi
@@ -19,7 +20,8 @@ class RinkebyContractProvider(RinkebyNFTContractBaseProvider):
 
     def mint(self, owner: str,  media_url: str, gas: int, wallet_secret: str):
         msg = 'Rock N Block test message'
-        owner_address = BlockchainProvider.addressFromString(address=owner)
+        if not Web3.isAddress(owner):
+            raise ValueError("Incorrect address provided: '{}'".format(owner))
         gen_hash = BlockchainProvider.generateRandomRaw()
         signed_msg = self.provider.signMessage(
             msg_for_sign=msg,
@@ -31,7 +33,7 @@ class RinkebyContractProvider(RinkebyNFTContractBaseProvider):
         )
         nonce = self.provider.eth.get_transaction_count(recovery_hash)
         mint = self.contract.functions \
-            .mint(owner=owner_address,
+            .mint(owner=owner,
                   unique_hash=gen_hash,
                   media_url=media_url) \
             .buildTransaction({
@@ -64,8 +66,9 @@ class RinkebyContractProvider(RinkebyNFTContractBaseProvider):
         return supply
 
     def _get_contract(self):
+        contract_address = Web3.toChecksumAddress(self.contract_address)
         contract = self.provider.eth.contract(
-            address=self.contract_address,
+            address=contract_address,
             abi=self.contract_abi)
         return contract
 
