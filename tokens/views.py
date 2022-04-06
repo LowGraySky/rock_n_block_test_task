@@ -1,11 +1,13 @@
 import json
 import logging
 
-from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
-from django.http import HttpResponse
+import web3.exceptions
+from django.core.exceptions import PermissionDenied
+from django.http import HttpResponse, JsonResponse
 
 from tokens.crypto.blockchain_provider import BlockchainProvider
 from tokens.crypto.rinkeby_nft_contract_provider import RinkebyContractProvider
+from tokens.exceptions.exceptions import EmptyParamError
 from tokens.models import Token
 from RockNBlockTestTask.settings import CONFIG
 
@@ -14,14 +16,17 @@ logger = logging.getLogger('eventer')
 
 def CreateToken(request) -> HttpResponse:
     logger.info('Handling request: method [tokens/create]')
-    if request.method == 'POST':
+    try:
+        if request.method != 'POST':
+            raise PermissionDenied
+        request.headers.get('Content-Type', 'application/json')
         media_url = request.POST.get('media_url')
         owner = request.POST.get('owner')
 
         if media_url is None or media_url == '':
-            raise ObjectDoesNotExist
+            raise EmptyParamError('media_url')
         if owner is None or owner == '':
-            raise ObjectDoesNotExist
+            raise EmptyParamError('owner')
         logger.info("Got params from request: 'media url':'{}', 'owner':'{}'".format(media_url, owner))
 
         node = CONFIG['blockchain']['node_url']
@@ -43,21 +48,47 @@ def CreateToken(request) -> HttpResponse:
             owner=owner
         )
         logger.info('Successfully request processed, response: {}'.format(token))
-        return HttpResponse(token.__str__())
+        status = 200
+        msg = token.__str__()
+    except EmptyParamError as error:
+        status = 404
+        msg = error.message
+    except PermissionDenied:
+        status = 403
+        msg = "Required only 'POST' method"
+    except web3.exceptions.ValidationError:
+        status = 404
+        msg = "Failed to 'mint' function process"
+    finally:
+        return JsonResponse(
+            {'message': msg},
+            status=status
+        )
 
 
 def ListTokens(request) -> HttpResponse:
-    if request.method == 'GET':
+    try:
+        if request.method != 'GET':
+            raise PermissionDenied
         logger.info('Handling request: method [tokens/list]')
         tokens = Token.objects.all()
         logger.info('Successfully request processed, response: {}'.format(tokens.__str__()))
-        return HttpResponse(tokens.__str__())
-    else:
-        raise PermissionDenied
+        status = 200
+        msg = tokens.__str__()
+    except PermissionDenied:
+        status = 403
+        msg = "Required only 'GET' method"
+    finally:
+        return JsonResponse(
+            {'message': msg},
+            status=status
+        )
 
 
 def TokenTotalSupply(request) -> HttpResponse:
-    if request.method == 'GET':
+    try:
+        if request.method != 'GET':
+            raise PermissionDenied
         logger.info('Handling request: method [tokens/total_supply]')
         node = CONFIG['blockchain']['node_url']
         contract = CONFIG['blockchain']['contract_address']
@@ -70,8 +101,17 @@ def TokenTotalSupply(request) -> HttpResponse:
             contract_address=contract,
             chain_id=chain
         ).totalSupply()
-
+        status = 200
+        msg = 'Total supply: {}'.format(supply)
         logger.info('Successfully request processed, response: {}'.format(supply))
-        return HttpResponse('Total supply: {}'.format(supply))
-    else:
-        raise PermissionDenied
+    except PermissionDenied:
+        status = 403
+        msg = "Required only 'GET' method"
+    except web3.exceptions:
+        status = 404
+        msg = "Failed to 'totalSupply' function process"
+    finally:
+        return JsonResponse(
+            {'message': msg},
+            status=status
+        )
