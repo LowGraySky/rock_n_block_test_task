@@ -62,14 +62,16 @@ class RinkebyContractProvider(RinkebyNFTContractBaseProvider):
 
     def totalSupply(self):
         supply = self.contract.functions.totalSupply().call
-        logging.info("get from total/supply function: total_supply:{}".format(supply))
+        logger.debug("Total_supply:{}".format(supply))
         return supply
 
     def _get_contract(self):
         contract_address = Web3.toChecksumAddress(self.contract_address)
+        logger.debug("To check sum address: {}".format(contract_address))
         contract = self.provider.eth.contract(
             address=contract_address,
             abi=self.contract_abi)
+        logger.debug("Contract object created: {}".format(contract.address))
         return contract
 
     contract = property(

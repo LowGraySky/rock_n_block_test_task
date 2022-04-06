@@ -56,9 +56,9 @@ def CreateToken(request) -> HttpResponse:
     except PermissionDenied:
         status = 403
         msg = "Required only 'POST' method"
-    except web3.exceptions.ValidationError:
-        status = 404
-        msg = "Failed to 'mint' function process"
+    #except web3.exceptions.ValidationError:
+    #    status = 404
+    #    msg = "Failed to 'mint' function process"
     finally:
         return JsonResponse(
             {'message': msg},
