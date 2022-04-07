@@ -1,7 +1,6 @@
 import json
 import logging
 
-import web3.exceptions
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponse, JsonResponse
 
@@ -48,21 +47,25 @@ def CreateToken(request) -> HttpResponse:
             owner=owner
         )
         logger.info('Successfully request processed, response: {}'.format(token))
-        status = 200
-        msg = token.__str__()
+        status = 'result'
+        status_code = 200
+        msg = "Token: {}".format(token.__str__())
     except EmptyParamError as error:
-        status = 404
+        status = 'error'
+        status_code = 400
         msg = error.message
     except PermissionDenied:
-        status = 403
+        status = 'error'
+        status_code = 403
         msg = "Required only 'POST' method"
-    #except web3.exceptions.ValidationError:
-    #    status = 404
-    #    msg = "Failed to 'mint' function process"
+    except Exception as error:
+        status = 'error'
+        status_code = 400
+        msg = "Failed to process 'mint' function: {}".format(error)
     finally:
         return JsonResponse(
-            {'message': msg},
-            status=status
+            {'status': status, 'message': msg},
+            status=status_code
         )
 
 
@@ -73,15 +76,21 @@ def ListTokens(request) -> HttpResponse:
         logger.info('Handling request: method [tokens/list]')
         tokens = Token.objects.all()
         logger.info('Successfully request processed, response: {}'.format(tokens.__str__()))
-        status = 200
+        status = 'result'
+        status_code = 200
         msg = tokens.__str__()
     except PermissionDenied:
-        status = 403
+        status = 'error'
+        status_code = 403
         msg = "Required only 'GET' method"
+    except Exception as error:
+        status = 'error'
+        status_code = 400
+        msg = "Failed to process 'list' function: {}".format(error)
     finally:
         return JsonResponse(
-            {'message': msg},
-            status=status
+            {'status': status, 'message': msg},
+            status=status_code
         )
 
 
@@ -101,17 +110,20 @@ def TokenTotalSupply(request) -> HttpResponse:
             contract_address=contract,
             chain_id=chain
         ).totalSupply()
-        status = 200
+        status = 'result'
+        status_code = 200
         msg = 'Total supply: {}'.format(supply)
         logger.info('Successfully request processed, response: {}'.format(supply))
     except PermissionDenied:
+        status = 'error'
         status = 403
         msg = "Required only 'GET' method"
-    except web3.exceptions:
-        status = 404
-        msg = "Failed to 'totalSupply' function process"
+    except Exception as error:
+        status = 'error'
+        status_code = 400
+        msg = "Failed to process 'totolSupply' function: {}".format(error)
     finally:
         return JsonResponse(
-            {'message': msg},
-            status=status
+            {'status': status, 'message': msg},
+            status=status_code
         )
