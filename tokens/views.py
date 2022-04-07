@@ -34,22 +34,27 @@ def CreateToken(request) -> HttpResponse:
         chain = CONFIG['blockchain']['chain_id']
         wallet_secret_key = CONFIG['blockchain']['wallet_secret']
         gas = CONFIG['blockchain']['gas']
+        unique_hash = BlockchainProvider.generateRandomRaw()
+
+        token = Token.create(
+            unique_hash=unique_hash,
+            media_url=media_url,
+            tx_hash='',
+            owner=owner
+        )
+        logger.info("Successfully create: {}".format(token.__unicode__()))
 
         transaction = RinkebyContractProvider(
             BlockchainProvider(node_address=node), address, abi, chain
-        ).mint(owner, media_url, gas, wallet_secret_key)
+        ).mint(owner, media_url, gas, wallet_secret_key, unique_hash)
         transaction_details = json.loads(transaction)
         logger.info("Processing transaction: {}".format(transaction_details))
-        token = Token.create(
-            unique_hash=transaction_details['unique_hash'],
-            tx_hash=transaction_details['tx_hash'],
-            media_url=media_url,
-            owner=owner
-        )
+
+        token.tx_hash = transaction_details['tx_hash']
         logger.info('Successfully request processed, response: {}'.format(token))
         status = 'result'
         status_code = 200
-        msg = "Token: {}".format(token.__str__())
+        msg = "Token: {}".format(token)
     except EmptyParamError as error:
         status = 'error'
         status_code = 400
@@ -62,6 +67,7 @@ def CreateToken(request) -> HttpResponse:
         status = 'error'
         status_code = 400
         msg = "Failed to process 'mint' function: {}".format(error)
+        logger.error(error)
     finally:
         return JsonResponse(
             {'status': status, 'message': msg},
