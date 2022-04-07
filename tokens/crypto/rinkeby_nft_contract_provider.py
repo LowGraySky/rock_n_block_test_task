@@ -18,11 +18,10 @@ class RinkebyContractProvider(RinkebyNFTContractBaseProvider):
         self.contract_abi = contract_abi
         self.chain_id = chain_id
 
-    def mint(self, owner: str,  media_url: str, gas: int, wallet_secret: str):
+    def mint(self, owner: str,  media_url: str, gas: int, wallet_secret: str, unique_hash: str):
         msg = 'Rock N Block test message'
         if not Web3.isAddress(owner):
             raise ValueError("Incorrect address provided: '{}'".format(owner))
-        gen_hash = BlockchainProvider.generateRandomRaw()
         signed_msg = self.provider.signMessage(
             msg_for_sign=msg,
             private_key=wallet_secret
@@ -34,7 +33,7 @@ class RinkebyContractProvider(RinkebyNFTContractBaseProvider):
         nonce = self.provider.eth.get_transaction_count(recovery_hash)
         mint = self.contract.functions \
             .mint(owner=owner,
-                  unique_hash=gen_hash,
+                  unique_hash=unique_hash,
                   media_url=media_url) \
             .buildTransaction({
                 'chainId': self.chain_id,
@@ -51,7 +50,7 @@ class RinkebyContractProvider(RinkebyNFTContractBaseProvider):
         tx_hash = self.provider.sendTransaction(signed_transaction=sign_transfer)
         transaction_obj = json.dumps(
             {
-                'unique_hash': gen_hash,
+                'unique_hash': unique_hash,
                 'tx_hash': tx_hash,
                 'gas': gas,
                 'recovery_hash': recovery_hash,
