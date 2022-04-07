@@ -6,6 +6,7 @@ from django.http import HttpResponse, JsonResponse
 
 from tokens.crypto.blockchain_provider import BlockchainProvider
 from tokens.crypto.rinkeby_nft_contract_provider import RinkebyContractProvider
+from tokens.crypto.token_object import TokenObject
 from tokens.exceptions.exceptions import EmptyParamError
 from tokens.models import Token
 from RockNBlockTestTask.settings import CONFIG
@@ -36,13 +37,13 @@ def CreateToken(request) -> HttpResponse:
         gas = CONFIG['blockchain']['gas']
         unique_hash = BlockchainProvider.generateRandomRaw()
 
-        token = Token.create(
+        token_object = TokenObject(
             unique_hash=unique_hash,
-            media_url=media_url,
             tx_hash='',
+            media_url=media_url,
             owner=owner
         )
-        logger.info("Successfully create: {}".format(token.__unicode__()))
+        logger.debug("Successfully create token_object: {}".format(token_object))
 
         transaction = RinkebyContractProvider(
             BlockchainProvider(node_address=node), address, abi, chain
@@ -50,7 +51,18 @@ def CreateToken(request) -> HttpResponse:
         transaction_details = json.loads(transaction)
         logger.info("Processing transaction: {}".format(transaction_details))
 
-        token.tx_hash = transaction_details['tx_hash']
+        tx_hash = transaction_details['tx_hash']
+        token_object.tx_hash = tx_hash
+        logger.debug("Updated token_object with 'tx_hash': {}, token_object: {}"
+                     .format(tx_hash, token_object))
+
+        token = Token.create(
+            unique_hash=token_object.unique_hash,
+            media_url=token_object.media_url,
+            tx_hash=token_object.tx_hash,
+            owner=token_object.owner
+        )
+        logger.info("Successfully create: {}".format(token.__unicode__()))
         logger.info('Successfully request processed, response: {}'.format(token))
         status = 'result'
         status_code = 200
@@ -93,6 +105,7 @@ def ListTokens(request) -> HttpResponse:
         status = 'error'
         status_code = 400
         msg = "Failed to process 'list' function: {}".format(error)
+        logger.error(error)
     finally:
         return JsonResponse(
             {'status': status, 'message': msg},
@@ -127,7 +140,8 @@ def TokenTotalSupply(request) -> HttpResponse:
     except Exception as error:
         status = 'error'
         status_code = 400
-        msg = "Failed to process 'totolSupply' function: {}".format(error)
+        msg = "Failed to process 'totalSupply' function: {}".format(error)
+        logger.error(error)
     finally:
         return JsonResponse(
             {'status': status, 'message': msg},
