@@ -63,6 +63,7 @@ def CreateToken(request) -> HttpResponse:
             owner=token_object.owner
         )
         logger.info("Successfully create: {}".format(token.__unicode__()))
+        token.save()
         logger.info('Successfully request processed, response: {}'.format(token))
         status = 'result'
         status_code = 200
