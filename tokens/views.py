@@ -2,6 +2,7 @@ import json
 import logging
 
 from django.core.exceptions import PermissionDenied
+from django.core.serializers import serialize
 from django.http import HttpResponse, JsonResponse
 
 from tokens.crypto.blockchain_provider import BlockchainProvider
@@ -37,13 +38,14 @@ def CreateToken(request) -> HttpResponse:
         gas = CONFIG['blockchain']['gas']
         unique_hash = BlockchainProvider.generateRandomRaw()
 
-        token_object = TokenObject(
+        token = Token.create(
             unique_hash=unique_hash,
-            tx_hash='',
             media_url=media_url,
+            tx_hash='',
             owner=owner
         )
-        logger.debug("Successfully create token_object: {}".format(token_object))
+        token.save()
+        logger.info("Token model instance  created: {}".format(token.__unicode__()))
 
         transaction = RinkebyContractProvider(
             BlockchainProvider(node_address=node), address, abi, chain
@@ -52,18 +54,9 @@ def CreateToken(request) -> HttpResponse:
         logger.info("Processing transaction: {}".format(transaction_details))
 
         tx_hash = transaction_details['tx_hash']
-        token_object.tx_hash = tx_hash
-        logger.debug("Updated token_object with 'tx_hash': {}, token_object: {}"
-                     .format(tx_hash, token_object))
-
-        token = Token.create(
-            unique_hash=token_object.unique_hash,
-            media_url=token_object.media_url,
-            tx_hash=token_object.tx_hash,
-            owner=token_object.owner
-        )
-        logger.info("Successfully create: {}".format(token.__unicode__()))
-        token.save()
+        token = token.update(txhash=tx_hash)
+        logger.debug("Updated token  with 'tx_hash': {}, token_object: {}"
+                     .format(tx_hash, token))
         logger.info('Successfully request processed, response: {}'.format(token))
         status = 'result'
         status_code = 200
@@ -97,7 +90,7 @@ def ListTokens(request) -> HttpResponse:
         logger.info('Successfully request processed, response: {}'.format(tokens.__str__()))
         status = 'result'
         status_code = 200
-        msg = tokens.__str__()
+        msg = serialize('json', tokens, fields=('id', 'unique_hash', 'media_url', 'tx_hash', 'owner'))
     except PermissionDenied:
         status = 'error'
         status_code = 403
