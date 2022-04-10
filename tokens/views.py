@@ -7,7 +7,6 @@ from django.http import HttpResponse, JsonResponse
 
 from tokens.crypto.blockchain_provider import BlockchainProvider
 from tokens.crypto.rinkeby_nft_contract_provider import RinkebyContractProvider
-from tokens.crypto.token_object import TokenObject
 from tokens.exceptions.exceptions import EmptyParamError
 from tokens.models import Token
 from RockNBlockTestTask.settings import CONFIG
