@@ -132,8 +132,8 @@ def TokenTotalSupply(request) -> HttpResponse:
         ).totalSupply()
         status = 'result'
         status_code = 200
-        msg = 'Total supply: {}'.format(supply)
-        logger.info('Successfully request processed, response: {}'.format(supply))
+        msg = {'contract': contract, 'total_supply': supply}
+        logger.info('Successfully request processed, response: {}'.format(msg))
     except PermissionDenied:
         status = 'error'
         status = 403

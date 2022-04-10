@@ -60,7 +60,7 @@ class RinkebyContractProvider(RinkebyNFTContractBaseProvider):
         return transaction_obj
 
     def totalSupply(self):
-        supply = self.contract.functions.totalSupply().call
+        supply = self.contract.functions.totalSupply().call()
         logger.debug("Total_supply:{}".format(supply))
         return supply
 
