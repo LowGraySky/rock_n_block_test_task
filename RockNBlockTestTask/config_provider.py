@@ -6,7 +6,7 @@ import yaml
 
 class ConfigProvider:
 
-    def __init__(self, base_dir: Path, path_to_config: str):
+    def __init__(self, base_dir: Path, path_to_config: Path):
         self.config_path = path_to_config
         self.base_dir = base_dir
 
