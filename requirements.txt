@@ -30,7 +30,6 @@ netaddr==0.8.0
 parsimonious==0.8.1
 protobuf==3.19.4
 psycopg2==2.9.3
-psycopg2-binary==2.9.3
 pycryptodome==3.14.1
 pyrsistent==0.18.1
 pytz==2022.1
