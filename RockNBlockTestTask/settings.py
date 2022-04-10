@@ -17,7 +17,7 @@ from RockNBlockTestTask.config_provider import ConfigProvider
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-CONFIG_PATH = os.path.normpath('RockNBlockTestTask\\service_config')
+CONFIG_PATH = os.path.normpath('RockNBlockTestTask/service_config')
 
 CONFIG = ConfigProvider(base_dir=BASE_DIR, path_to_config=CONFIG_PATH).get_config()
 
