@@ -12,7 +12,7 @@ class BlockchainBaseProvider(metaclass=ABCMeta):
         raise NotImplementedError("Not implemented 'signTransaction' method")
 
     @abstractmethod
-    def sendTransaction(self, signed_transaction):
+    def sendRawTransaction(self, signed_transaction):
         raise NotImplementedError("Not implemented 'sendTransaction' method")
 
     @abstractmethod

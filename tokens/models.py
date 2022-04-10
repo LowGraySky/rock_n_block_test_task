@@ -18,12 +18,10 @@ class Token(models.Model):
         )
         return token
 
-    def update(self, **kwargs):
-        for val in kwargs:
-            self.val = kwargs[val]
-        self.save()
-
     def __unicode__(self):
-        res = "Token:[unique_hash:{}, tx_hash:{}, media_url:{}, owner:{}]"\
-            .format(self.unique_hash, self.tx_hash, self.media_url, self.owner)
-        return res
+        return {
+            'unique_hash': self.unique_hash,
+            'tx_hash': self.tx_hash,
+            'media_url': self.media_url,
+            'owner': self.owner
+        }

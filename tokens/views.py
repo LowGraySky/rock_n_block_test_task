@@ -37,29 +37,25 @@ def CreateToken(request) -> HttpResponse:
         gas = CONFIG['blockchain']['gas']
         unique_hash = BlockchainProvider.generateRandomRaw()
 
-        token = Token.create(
-            unique_hash=unique_hash,
-            media_url=media_url,
-            tx_hash='',
-            owner=owner
-        )
-        token.save()
-        logger.info("Token model instance  created: {}".format(token.__unicode__()))
-
         transaction = RinkebyContractProvider(
             BlockchainProvider(node_address=node), address, abi, chain
         ).mint(owner, media_url, gas, wallet_secret_key, unique_hash)
         transaction_details = json.loads(transaction)
-        logger.info("Processing transaction: {}".format(transaction_details))
+        logger.info("Transaction successfully processed: {}".format(transaction_details))
 
         tx_hash = transaction_details['tx_hash']
-        token = token.update(txhash=tx_hash)
-        logger.debug("Updated token  with 'tx_hash': {}, token_object: {}"
-                     .format(tx_hash, token))
-        logger.info('Successfully request processed, response: {}'.format(token))
+        token = Token.create(
+            unique_hash=unique_hash,
+            media_url=media_url,
+            tx_hash=tx_hash,
+            owner=owner
+        )
+        token.save()
+        logger.info("Token model instance successfully created: {}".format(token.__unicode__()))
+        logger.info('Successfully request processed, response: {}'.format(token.__unicode__()))
         status = 'result'
         status_code = 200
-        msg = "Token: {}".format(token)
+        msg = token.__unicode__()
     except EmptyParamError as error:
         status = 'error'
         status_code = 400
@@ -86,10 +82,10 @@ def ListTokens(request) -> HttpResponse:
             raise PermissionDenied
         logger.info('Handling request: method [tokens/list]')
         tokens = Token.objects.all()
-        logger.info('Successfully request processed, response: {}'.format(tokens.__str__()))
+        logger.info('Successfully request processed, {} raws in response'.format(tokens.count()))
         status = 'result'
         status_code = 200
-        msg = serialize('json', tokens, fields=('id', 'unique_hash', 'media_url', 'tx_hash', 'owner'))
+        msg = json.loads(serialize('json', tokens))
     except PermissionDenied:
         status = 'error'
         status_code = 403

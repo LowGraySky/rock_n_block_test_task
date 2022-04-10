@@ -1,6 +1,7 @@
 import json
 import logging
 
+from eth_utils import to_text
 from web3 import Web3
 from web3.auto import w3
 
@@ -32,9 +33,9 @@ class RinkebyContractProvider(RinkebyNFTContractBaseProvider):
         )
         nonce = self.provider.eth.get_transaction_count(recovery_hash)
         mint = self.contract.functions \
-            .mint(owner=owner,
-                  unique_hash=unique_hash,
-                  media_url=media_url) \
+            .mint(owner,
+                  unique_hash,
+                  media_url) \
             .buildTransaction({
                 'chainId': self.chain_id,
                 'gas': gas,
@@ -47,11 +48,11 @@ class RinkebyContractProvider(RinkebyNFTContractBaseProvider):
             transaction=mint,
             private_key=wallet_secret
         )
-        tx_hash = self.provider.sendTransaction(signed_transaction=sign_transfer)
+        tx_hash = self.provider.sendRawTransaction(signed_transaction=sign_transfer)
         transaction_obj = json.dumps(
             {
                 'unique_hash': unique_hash,
-                'tx_hash': tx_hash,
+                'tx_hash': str(tx_hash),
                 'gas': gas,
                 'recovery_hash': recovery_hash,
                 'nonce': nonce

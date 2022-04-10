@@ -23,8 +23,8 @@ class BlockchainProvider(BlockchainBaseProvider):
             "Sign transaction '{}' with private key '{}': {}".format(transaction, private_key, signed_transaction))
         return signed_transaction
 
-    def sendTransaction(self, signed_transaction):
-        transfer = self.provider.eth.sendTransaction(signed_transaction.rawTransaction)
+    def sendRawTransaction(self, signed_transaction):
+        transfer = self.provider.eth.send_raw_transaction(signed_transaction.rawTransaction)
         logger.debug("Send transaction '{}', got tx_hash: {}".format(signed_transaction, transfer))
         return transfer
 
