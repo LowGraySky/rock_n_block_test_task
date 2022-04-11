@@ -30,7 +30,7 @@ SECRET_KEY = CONFIG['service']['secret_key']
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = CONFIG['service']['debug_mode']
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = CONFIG['service']['allowed_hosts'].split(" ")
 
 # Application definition
 

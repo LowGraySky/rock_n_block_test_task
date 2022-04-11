@@ -1,9 +1,10 @@
 service:
   secret_key: 'django-insecure-_%6x=qsrx0n!p65&%ydo)wk7^)%rdv8fc@rls@nh^xatof#wti'
   debug_mode: True
+  allowed_hosts: localhost 127.0.0.1 [::1]
 
 database:
-  database_engine: 'django.db.backends.postgresql_psycopg2'
+  database_engine: 'django.db.backends.postgresql'
   database_hostname: 127.0.0.1
   database_port: 5432
   database_name: 'postgres'
