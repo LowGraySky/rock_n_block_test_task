@@ -16,7 +16,11 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
+from tokens import views
+
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('tokens/', include('tokens.urls'))
+    path('api/token/create', views.CreateToken, name='create'),
+    path('api/list', views.ListTokens, name='list'),
+    path('api/token.total_supply', views.TokenTotalSupply, name='total_supply')
 ]

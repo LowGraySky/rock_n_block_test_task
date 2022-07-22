@@ -25,12 +25,12 @@ CONFIG = ConfigProvider(base_dir=BASE_DIR, path_to_config=CONFIG_PATH).get_confi
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = CONFIG['service']['secret_key']
+SECRET_KEY = os.environ["SECRET_KEY"]
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = CONFIG['service']['debug_mode']
+DEBUG = os.environ.get("DEBUG", False)
 
-ALLOWED_HOSTS = CONFIG['service']['allowed_hosts'].split(" ")
+ALLOWED_HOSTS = ["*"]
 
 # Application definition
 
@@ -58,8 +58,7 @@ ROOT_URLCONF = 'RockNBlockTestTask.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates']
-        ,
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -73,20 +72,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'RockNBlockTestTask.wsgi.application'
-
-# Database
-# https://docs.djangoproject.com/en/4.0/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': CONFIG['database']['database_engine'],
-        'NAME': CONFIG['database']['database_name'],
-        'USER': CONFIG['database']['database_username'],
-        'PASSWORD': CONFIG['database']['database_password'],
-        'HOST': CONFIG['database']['database_hostname'],
-        'PORT': CONFIG['database']['database_port'],
-    }
-}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
@@ -155,3 +140,10 @@ LOGGING = {
         }
     }
 }
+
+WALLET_SECRET = os.environ.get("WALLET_SECRET", "")
+NODE_URL = os.environ.get("NODE_URL", "")
+CONTRACT_ADDRESS = os.environ.get("CONTRACT_ADDRESS", "")
+CONTRACT_ABI = os.environ.get("CONTRACT_ABI", "")
+GAS = os.environ.get("GAS", 70000)
+CHAIN_ID = os.environ.get("CHAIN_ID", 4)

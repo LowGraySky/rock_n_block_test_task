@@ -6,15 +6,12 @@ from eth_account.messages import encode_defunct
 from web3 import Web3
 from web3.middleware import geth_poa_middleware
 
-from tokens.crypto.blockchain_base_provide import BlockchainBaseProvider
-
 logger = logging.getLogger('crypter')
 
 
-class BlockchainProvider(BlockchainBaseProvider):
+class BlockchainProvider():
 
     def __init__(self, node_address):
-        super().__init__()
         self.node_address = node_address
 
     def signTransaction(self, transaction, private_key):

@@ -5,8 +5,8 @@ from django.core.exceptions import PermissionDenied
 from django.core.serializers import serialize
 from django.http import HttpResponse, JsonResponse
 
-from tokens.crypto.blockchain_provider import BlockchainProvider
-from tokens.crypto.rinkeby_nft_contract_provider import RinkebyContractProvider
+from tokens.blockchain_provider import BlockchainProvider
+from tokens.rinkeby_nft_contract_provider import RinkebyContractProvider
 from tokens.exceptions.exceptions import EmptyParamError
 from tokens.models import Token
 from RockNBlockTestTask.settings import CONFIG

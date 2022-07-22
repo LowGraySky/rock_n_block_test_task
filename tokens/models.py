@@ -18,10 +18,5 @@ class Token(models.Model):
         )
         return token
 
-    def __unicode__(self):
-        return {
-            'unique_hash': self.unique_hash,
-            'tx_hash': self.tx_hash,
-            'media_url': self.media_url,
-            'owner': self.owner
-        }
+    def __str__(self):
+        return f"unique_hash: {self.unique_hash} tx_hash: {self.tx_hash} media_url: {self.media_url} owner: {self.owner}"

@@ -1,17 +1,15 @@
 import json
 import logging
 
-from eth_utils import to_text
 from web3 import Web3
 from web3.auto import w3
 
-from tokens.crypto.blockchain_provider import BlockchainProvider
-from tokens.crypto.rinkeby_nft_contract_base_provider import RinkebyNFTContractBaseProvider
+from tokens.blockchain_provider import BlockchainProvider
 
 logger = logging.getLogger('crypter')
 
 
-class RinkebyContractProvider(RinkebyNFTContractBaseProvider):
+class RinkebyContractProvider():
 
     def __init__(self, blockchain_provider: BlockchainProvider, contract_address, contract_abi, chain_id):
         self.provider = blockchain_provider
