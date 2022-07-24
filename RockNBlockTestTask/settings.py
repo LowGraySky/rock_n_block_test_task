@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 import os.path
+import dj_database_url
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -50,6 +51,8 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'RockNBlockTestTask.urls'
+
+DATABASES = {"default": dj_database_url.config(conn_max_age=600)}
 
 REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': [
@@ -161,3 +164,4 @@ INFURA_API_KEY = os.environ.get("INFURA_API_KEY", "")
 CONTRACT_ADDRESS = os.environ.get("CONTRACT_ADDRESS", "")
 GAS = os.environ.get("GAS", 70000)
 CHAIN_ID = os.environ.get("CHAIN_ID", 4)
+ABI = os.environ.get('contract_abi.json', None)
