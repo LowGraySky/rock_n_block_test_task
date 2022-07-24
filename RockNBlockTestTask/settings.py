@@ -12,20 +12,14 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 import os.path
 from pathlib import Path
 
-from RockNBlockTestTask.config_provider import ConfigProvider
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
-CONFIG_PATH = Path('RockNBlockTestTask/service_config').resolve()
-
-CONFIG = ConfigProvider(base_dir=BASE_DIR, path_to_config=CONFIG_PATH).get_config()
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ["SECRET_KEY"]
+SECRET_KEY = os.environ.get("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("DEBUG", False)
@@ -41,7 +35,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'tokens'
+    'rest_framework',
+    'tokens',
+    'drf_spectacular',
 ]
 
 MIDDLEWARE = [
@@ -54,6 +50,25 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'RockNBlockTestTask.urls'
+
+REST_FRAMEWORK = {
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+         'rest_framework.permissions.AllowAny',
+    ],
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 200
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Rock N Block Rinkeby App',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+}
 
 TEMPLATES = [
     {
@@ -142,8 +157,7 @@ LOGGING = {
 }
 
 WALLET_SECRET = os.environ.get("WALLET_SECRET", "")
-NODE_URL = os.environ.get("NODE_URL", "")
+INFURA_API_KEY = os.environ.get("INFURA_API_KEY", "")
 CONTRACT_ADDRESS = os.environ.get("CONTRACT_ADDRESS", "")
-CONTRACT_ABI = os.environ.get("CONTRACT_ABI", "")
 GAS = os.environ.get("GAS", 70000)
 CHAIN_ID = os.environ.get("CHAIN_ID", 4)
