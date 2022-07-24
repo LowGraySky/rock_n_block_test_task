@@ -20,10 +20,14 @@ from drf_spectacular.views import SpectacularSwaggerView, SpectacularAPIView
 from tokens import views
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('tokens/create', views.CreateToken, name='create'),
-    path('list', views.ListTokens, name='list'),
-    path('tokens/total_supply', views.TokenTotalSupply, name='total_supply'),
-    path('schema/', SpectacularAPIView.as_view(), name='schema'),
-    path('schema/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+    path("admin/", admin.site.urls),
+    path("tokens/create", views.CreateToken, name="create"),
+    path("list", views.ListTokens, name="list"),
+    path("tokens/total_supply", views.TokenTotalSupply, name="total_supply"),
+    path("schema/", SpectacularAPIView.as_view(), name="schema"),
+    path(
+        "schema/swagger-ui/",
+        SpectacularSwaggerView.as_view(url_name="schema"),
+        name="swagger-ui",
+    ),
 ]
