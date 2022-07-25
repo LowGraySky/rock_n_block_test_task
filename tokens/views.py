@@ -1,6 +1,7 @@
 import json
 import logging
 
+from django.conf import settings
 from drf_spectacular.utils import extend_schema
 from rest_framework import generics
 from rest_framework.permissions import AllowAny
@@ -37,6 +38,8 @@ class CreateTokenView(APIView):
             token = Token.objects.filter(unique_hash=hash)
             token.update(tx_hash=tx_hash)
             return Response(token)
+        else:
+            return Response(serializer.errors, status=400)
 
 
 @extend_schema()
@@ -58,4 +61,4 @@ class TotalSupplyTokenView(APIView):
     def get(self, request):
         provider = BlockchainProvider()
         supply = RinkebyContractProvider(provider=provider).totalSupply()
-        return Response(supply)
+        return Response(dict(contract=settings.CONTRACT_ADDRESS, total_supply=supply))
