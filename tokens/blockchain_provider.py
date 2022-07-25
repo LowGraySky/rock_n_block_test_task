@@ -59,7 +59,7 @@ class BlockchainProvider:
         return random_number
 
     def _get_provider(self):
-        node_add = f"https://inkeby.infura.io/v3/{settings.INFURA_API_KEY}"
+        node_add = f"https://rinkeby.infura.io/v3/{settings.INFURA_API_KEY}"
         provider = Web3(Web3.HTTPProvider(node_add))
         provider.middleware_onion.inject(geth_poa_middleware, layer=0)
         logger.debug("Create HTTPProvider for node: {}".format(node_add))
