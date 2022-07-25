@@ -14,19 +14,19 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path
 from drf_spectacular.views import SpectacularSwaggerView, SpectacularAPIView
 
 from tokens import views
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("tokens/create", views.CreateToken, name="create"),
-    path("list", views.ListTokens, name="list"),
-    path("tokens/total_supply", views.TokenTotalSupply, name="total_supply"),
-    path("schema/", SpectacularAPIView.as_view(), name="schema"),
+    path("tokens/create", views.CreateTokenView.as_view(), name="create"),
+    path("tokens/list", views.ListTokenView.as_view(), name="list"),
+    path("tokens/total_supply", views.TotalSupplyTokenView.as_view(), name="total_supply"),
+    path("swagger/", SpectacularAPIView.as_view(), name="schema"),
     path(
-        "schema/swagger-ui/",
+        "swagger-ui/",
         SpectacularSwaggerView.as_view(url_name="schema"),
         name="swagger-ui",
     ),

@@ -14,16 +14,19 @@ import dj_database_url
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+import environ
 
+BASE_DIR = Path(__file__).resolve().parent.parent
+env = environ.Env(DEBUG=(bool, False))
+env.read_env(os.path.join(BASE_DIR, ".env"))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get("SECRET_KEY")
+SECRET_KEY = env("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get("DEBUG", False)
+DEBUG = env("DEBUG")
 
 ALLOWED_HOSTS = ["*"]
 
@@ -52,7 +55,16 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = "RockNBlockTestTask.urls"
 
-DATABASES = {"default": dj_database_url.config(conn_max_age=600)}
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "postgres",
+        "USER": "postgres",
+        "PASSWORD": "1~",
+        "HOST": "localhost",
+        "PORT": "5432",
+    }
+}
 
 REST_FRAMEWORK = {
     "DEFAULT_RENDERER_CLASSES": [
@@ -143,9 +155,9 @@ LOGGING = {
     },
 }
 
-WALLET_SECRET = os.environ.get("WALLET_SECRET", "")
-INFURA_API_KEY = os.environ.get("INFURA_API_KEY", "")
-CONTRACT_ADDRESS = os.environ.get("CONTRACT_ADDRESS", "")
-GAS = os.environ.get("GAS", 70000)
-CHAIN_ID = os.environ.get("CHAIN_ID", 4)
-ABI = os.environ.get("contract_abi.json", None)
+WALLET_SECRET = env("WALLET_SECRET")
+INFURA_API_KEY = env("INFURA_API_KEY")
+CONTRACT_ADDRESS = env("CONTRACT_ADDRESS")
+GAS = env("GAS")
+CHAIN_ID = env("CHAIN_ID")
+ABI = env("ABI")
